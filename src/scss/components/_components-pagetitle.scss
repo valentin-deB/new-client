@@ -1,0 +1,19 @@
+/* ---------------------------------
+=page title
+--------------------------------- */
+
+.c-pagetitle {
+  font-weight: 600;
+  font-size: clamp(
+    calc(48 / 16 * 1rem),
+    calc(1rem + 7vw),
+    calc(132 / 16 * 1rem)
+  );
+  line-height: 1.12;
+  max-width: 15ch;
+  margin-bottom: 0.75em;
+}
+
+.c-pagetitle > span {
+  color: var(--color-brand-bright);
+}

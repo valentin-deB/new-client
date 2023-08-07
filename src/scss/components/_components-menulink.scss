@@ -1,0 +1,19 @@
+/* ---------------------------------
+=menu link
+--------------------------------- */
+
+.c-menulink {
+  display: inline-block;
+  font-size: calc(14 / 16 * 1rem);
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: calc(6 / 16 * 1rem) calc(12 / 16 * 1rem);
+  color: var(--color-white);
+
+  &:hover,
+  &:focus {
+    color: var(--color-white);
+    text-decoration: none;
+  }
+}

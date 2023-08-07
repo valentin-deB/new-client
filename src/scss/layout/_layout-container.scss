@@ -1,0 +1,29 @@
+/* ---------------------------------
+=container
+--------------------------------- */
+
+.l-container {
+  margin: 0 auto;
+  padding-left: calc(18 / 16 * 1rem);
+  padding-right: calc(18 / 16 * 1rem);
+  max-width: 1480px;
+  height: 100%;
+
+  @include breakpoint(medium) {
+    padding-left: calc(36 / 16 * 1rem);
+    padding-right: calc(36 / 16 * 1rem);
+  }
+
+  @include breakpoint(xlarge) {
+    padding-left: calc(54 / 16 * 1rem);
+    padding-right: calc(54 / 16 * 1rem);
+  }
+}
+
+.l-container--small{
+  max-width: 1040px;
+}
+
+.l-container--copy {
+  max-width: 80ch;
+}

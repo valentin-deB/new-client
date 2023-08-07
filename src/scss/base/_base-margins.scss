@@ -1,0 +1,14 @@
+// ---------------------------------
+// =margins
+// ---------------------------------
+
+/*
+kill all top margins
+normalize bottom margins
+*/
+
+*,
+*::before,
+*::after {
+  margin-top: 0;
+}

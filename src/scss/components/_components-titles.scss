@@ -1,0 +1,92 @@
+/* ---------------------------------
+=titles
+--------------------------------- */
+
+// https://www.modularscale.com/?16,18&px&1.2
+
+.c-h1,
+.c-h2,
+.c-h3,
+.c-h4 {
+  font-family: var(--fontstack-alt);
+  font-weight: 400;
+  line-height: 1.24;
+  margin-bottom: 1em;
+  letter-spacing: -0.6px;
+  font-feature-settings: "ss01" 1, "onum" 1;
+}
+
+.c-h1 {
+  font-size: clamp(
+    calc(31 / 16 * 1rem),
+    calc(1rem + 2vw),
+    calc(40 / 16 * 1rem)
+  );
+  color: var(--color-text);
+}
+
+.c-h1--dark{
+  color: var(--color-text-offset);
+}
+
+.c-h2 {
+  font-size: clamp(
+    calc(22 / 16 * 1rem),
+    calc(1rem + 1vw),
+    calc(35 / 16 * 1rem)
+  );
+  color: var(--color-text-offset);
+}
+
+.c-h2--white{
+  color: var(--color-text);
+}
+
+.c-h3 {
+  font-weight: 500;
+  font-size: clamp(
+    calc(23 / 16 * 1rem),
+    calc(1rem + 1vw),
+    calc(31 / 16 * 1rem)
+  );
+  color: var(--color-text-offset);
+}
+
+.c-h3--white{
+  color: var(--color-text);
+}
+
+.c-h4 {
+  font-weight: 400;
+  font-size: calc(16 / 16 * 1rem);
+  color: var(--color-brand);
+}
+
+/* ---------------------------------
+=small title
+--------------------------------- */
+
+.c-smalltitle {
+  font-weight: 500;
+  font-family: var(--fontstack--main);
+  font-size: calc(18 / 16 * 1rem);
+  color: var(--color-text-offset);
+  margin-bottom: 1em;
+}
+
+/* ---------------------------------
+=subtitle
+--------------------------------- */
+
+.c-subtitle {
+  font-family: var(--fontstack-alt);
+  font-weight: 400;
+  line-height: 1.24;
+  margin-bottom: 0.72em;
+  font-size: clamp(
+    calc(23 / 16 * 1rem),
+    calc(1rem + 1vw),
+    calc(31 / 16 * 1rem)
+  );
+  color: var(--color-text-offset);
+}

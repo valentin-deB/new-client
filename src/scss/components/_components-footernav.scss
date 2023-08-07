@@ -1,0 +1,33 @@
+/* ---------------------------------
+=footer navigation
+--------------------------------- */
+
+.c-footernav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: calc(6 / 16 * 1rem);
+
+  @include breakpoint(large) {
+    gap: calc(3 / 16 * 1rem);
+  }
+}
+
+.c-footernav__link {
+  color: var(--color-text-invert);
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: var(--color-text-invert);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+  }
+}

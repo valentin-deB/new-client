@@ -1,0 +1,60 @@
+/* ---------------------------------
+=call to action
+--------------------------------- */
+
+.c-cta {
+  display: flex;
+  justify-content: center;
+  padding: 12px 24px;
+
+  font-weight: 400;
+  font-size: calc(16 / 16 * 1rem);
+  line-height: 1.2;
+  font-family: var(--fontstack-alt);
+  color: var(--color-text);
+  background-color: var(--color-brand);
+
+  border-radius: var(--border-radius);
+  border: 2px solid var(--color-text);
+
+  text-decoration: none;
+  transform: scale(1);
+  transition: transform 0.3s ease-out;
+
+  white-space: nowrap;
+  cursor: pointer;
+  &:hover,
+  &:focus {
+    color: var(--color-text);
+    transform: scale(1.05);
+    transition: transform 0.3s ease-out;
+  }
+
+  @include breakpoint(large) {
+    font-size: calc(18 / 16 * 1rem);
+  }
+}
+
+
+// ---------------------------------
+// =variants
+// ---------------------------------
+
+.c-cta--secondary {
+  background-color: transparent;
+  border: solid 2px var(--color-border);
+  color: var(--color-text);
+}
+
+.c-pagesection--light {
+
+  .c-cta--secondary {
+    color: var(--color-brand);
+  }
+
+}
+
+.c-cta--small{
+  padding: 10px 18px;
+  font-size: calc(16 / 16 * 1rem);
+}

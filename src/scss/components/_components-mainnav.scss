@@ -1,0 +1,44 @@
+/* ---------------------------------
+=mainnav
+--------------------------------- */
+
+.c-mainnav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: calc(30 / 16 * 1rem);
+
+  @include breakpoint(xlarge) {
+    gap: calc(42 / 16 * 1rem);
+  }
+}
+
+.c-mainnav__link {
+  display: inline-block;
+  padding-top: calc(6 / 16 * 1rem);
+  padding-bottom: calc(6 / 16 * 1rem);
+
+  font-size: 1rem;
+  font-weight: 400;
+  text-decoration: none;
+
+  color: var(--color-text);
+
+  font-family: var(--fontstack-alt);
+
+  &:hover,
+  &:focus {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+.c-mainnav__link.is-current {
+  padding-bottom: calc(4 / 16 * 1rem);
+  border-bottom: 2px solid var(--color-brand-bright);
+}

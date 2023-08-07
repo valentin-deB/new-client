@@ -1,0 +1,29 @@
+:root {
+  // base variables (do not use in CSS)
+  --color-orange: #77F2B8;
+  --color-orange--muted: #F064491A;
+  --color-blue: #101F34;
+  --color-vibrant-blue: #172B46;
+
+  --color-gray1: #0A0301;
+  --color-gray2: #393331;
+  --color-gray3: #585452;
+  --color-gray4: #908c8b;
+  --color-gray5: #c2bcbc;
+  --color-gray6: #ede8e8;
+
+  --color-white: #ffffff;
+
+  // incident variables (used in CSS)
+  --color-background: var(--color-white);
+  --color-text: var(--color-blue);
+  --color-text-offset: var(--color-white);
+  --color-background-invert: var(--color-blue);
+  --color-background-muted: var(--color-orange--muted);
+  --color-text-invert: var(--color-gray1);
+  --color-border: var(--color-orange);
+
+  --color-brand: var(--color-orange);
+  --color-brand-dark: var(--color-blue);
+  --color-brand-vibrant-dark: var(--color-vibrant-blue);
+}

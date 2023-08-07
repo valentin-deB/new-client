@@ -1,0 +1,113 @@
+/* ---------------------------------
+=sitefooter
+--------------------------------- */
+
+/*
+3 layers: more control over vertical spacing
+- contact: links + social (grid)
+- main: address + mainnav + legalnav (grid)
+- end
+*/
+
+.c-sitefooter {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  padding-top: calc(60 / 16 * 1rem);
+  padding-bottom: calc(24 / 16 * 1rem);
+
+  @include breakpoint(medium) {
+    padding-top: calc(72 / 16 * 1rem);
+  }
+
+  @include breakpoint(large) {
+    padding-top: calc(90 / 16 * 1rem);
+  }
+
+  @include breakpoint(xlarge) {
+    padding-top: calc(120 / 16 * 1rem);
+  }
+}
+
+/* ---------------------------------
+=sitefooter contact
+--------------------------------- */
+
+.c-sitefooter__contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "a"
+    "b";
+  gap: calc(var(--gutter) / 2);
+  margin-bottom: calc(36 / 16 * 1rem);
+
+  @include breakpoint(medium) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gutter);
+    grid-template-areas: "a b";
+    margin-bottom: calc(60 / 16 * 1rem);
+  }
+
+  @include breakpoint(large) {
+    margin-bottom: calc(84 / 16 * 1rem);
+  }
+}
+
+.c-sitefooter__links {
+  grid-area: a;
+}
+
+.c-sitefooter__social {
+  grid-area: b;
+
+  @include breakpoint(medium) {
+    justify-self: end;
+  }
+}
+
+/* ---------------------------------
+=sitefooter main
+--------------------------------- */
+
+.c-sitefooter__main {
+  margin-bottom: calc(36 / 16 * 1rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gutter);
+  grid-template-areas:
+    "a"
+    "b"
+    "c";
+
+  @include breakpoint(medium) {
+    margin-bottom: calc(48 / 16 * 1rem);
+    grid-template-columns: minmax(0, 6fr) repeat(2, minmax(0, 4fr));
+    grid-template-areas: "a b c";
+  }
+
+  @include breakpoint(large) {
+    margin-bottom: calc(60 / 16 * 1rem);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.c-sitefooter__address {
+  grid-area: a;
+}
+
+.c-sitefooter__mainnav {
+  grid-area: b;
+}
+
+.c-sitefooter__legalnav {
+  grid-area: c;
+}
+
+/* ---------------------------------
+=sitefooter end
+--------------------------------- */
+
+.c-sitefooter__end {
+  padding-top: calc(24 / 16 * 1rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}

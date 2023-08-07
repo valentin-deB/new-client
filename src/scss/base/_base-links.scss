@@ -1,0 +1,23 @@
+/* ---------------------------------
+=links
+--------------------------------- */
+
+a {
+  position: relative;
+  color: var(--color-brand);
+  font-family: var(--fontstack-alt);
+
+  text-decoration: none;
+
+  &> svg {
+    transform: translate3d( 0, 1.5px, 0);
+    transition: transform 0.2s ease-in-out;
+    margin-left: 3px;
+  }
+}
+
+a:hover {
+  &> svg {
+    transform: translate3d( 2px, 1.5px, 0);
+  }
+}

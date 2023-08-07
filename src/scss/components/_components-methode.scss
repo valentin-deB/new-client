@@ -1,0 +1,25 @@
+
+.c-methode{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: calc(90 / 16 * 1rem);
+}
+
+.c-methode__title{
+    font-size: clamp(
+        calc(31 / 16 * 1rem),
+        calc(1rem + 2vw),
+        calc(40 / 16 * 1rem)
+    );
+    margin-bottom: calc(18 / 16 * 1rem);
+}
+
+.c-methode__text{
+    text-align: center;
+    max-width: 60ch;
+}
+
+.c-methode__shema{
+    width: 85%;
+}

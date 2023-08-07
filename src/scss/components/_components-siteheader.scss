@@ -1,0 +1,51 @@
+/* ---------------------------------
+=siteheader
+--------------------------------- */
+
+.c-siteheader {
+  color: var(--color-text);
+
+  padding-top: calc(24 / 16 * 1rem);
+  padding-bottom: calc(18 / 16 * 1rem);
+
+  @include breakpoint(medium) {
+    padding-top: calc(36 / 16 * 1rem);
+    padding-bottom: calc(24 / 16 * 1rem);
+  }
+
+  @include breakpoint(large) {
+    padding-top: calc(42 / 16 * 1rem);
+    padding-bottom: calc(30 / 16 * 1rem);
+  }
+
+  @include breakpoint(xlarge) {
+    padding-top: calc(60 / 16 * 1rem);
+    padding-bottom: calc(42 / 16 * 1rem);
+  }
+}
+
+.c-siteheader__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.c-siteheader__logo {
+  margin: 0 auto 0 0;
+}
+
+.c-siteheader__menunav {
+  margin: 0;
+
+  @include breakpoint(medium) {
+    display: none;
+  }
+}
+
+.c-siteheader__mainnav {
+  display: none;
+  @include breakpoint(medium) {
+    display: block;
+  }
+}

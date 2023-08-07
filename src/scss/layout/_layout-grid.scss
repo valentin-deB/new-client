@@ -1,0 +1,65 @@
+/* ---------------------------------
+=grid
+--------------------------------- */
+
+/* ---------------------------------
+=variables
+--------------------------------- */
+
+$breakpoints-map: (
+  "small": "all and (min-width: 500px)",
+  "medium": "all and (min-width: 760px)",
+  "large": "all and (min-width: 1024px)",
+  "xlarge": "all and (min-width: 1440px)",
+) !default;
+
+// ---------------------------------
+// =base classes
+// ---------------------------------
+
+.l-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gutter);
+}
+
+// columns
+.l-grid--2cols {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.l-grid--3cols {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.l-grid--4cols {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.l-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+// ---------------------------------
+// =responsive classes
+// ---------------------------------
+
+@each $name, $query in $breakpoints-map {
+  @media #{$query} {
+    .l-grid--2cols\@#{$name} {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .l-grid--3cols\@#{$name} {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .l-grid--4cols\@#{$name} {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}

@@ -1,0 +1,93 @@
+/* ---------------------------------
+=page section
+--------------------------------- */
+
+.c-pagesection {
+  position: relative;
+  padding-top: calc(60 / 16 * 1rem);
+  padding-bottom: calc(48 / 16 * 1rem);
+
+  background-color: var(--color-background);
+
+  @include breakpoint(medium) {
+    padding-top: calc(120 / 16 * 1rem);
+    padding-bottom: calc(72 / 16 * 1rem);
+  }
+
+  @include breakpoint(large) {
+    padding-top: calc(150 / 16 * 1rem);
+    padding-bottom: calc(72 / 16 * 1rem);
+  }
+}
+
+.c-pagesection + .c-pagesection--deco{
+
+  // +100 for the height of the deco
+  
+  padding-bottom: calc((48 + 50) / 16 * 1rem);
+  
+  @include breakpoint(medium) {
+    padding-bottom: calc((60 + 75) / 16 * 1rem);
+  }
+
+  @include breakpoint(large) {
+    padding-bottom: calc((72 + 100) / 16 * 1rem);
+  }
+
+}
+
+/* ---------------------------------
+=variants of page sections
+--------------------------------- */
+
+.c-pagesection--light {
+  position: relative;
+  background-color: var(--color-background-invert);
+  color: var(--color-text-invert);
+}
+
+.c-pagesection--deco::before{
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate3D(0, -99%, 0);
+  background-color: inherit;
+  width: 100%;
+  
+  z-index: 1;
+  clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 50% 90%, 0% 0%);
+
+  height: 30px;
+  
+  @include breakpoint(medium) {
+    height: 50px;
+  }
+  
+  @include breakpoint(large) {
+    height: 60px;
+  }
+}
+
+.c-pagesection--big-deco{
+  @include breakpoint(medium) {
+    padding-top: calc(54 / 16 * 1rem);
+  }
+  
+  @include breakpoint(large) {
+    padding-top: calc(72 / 16 * 1rem);
+  }
+}
+
+.c-pagesection--big-deco::before{
+    height: 50px;
+  
+  @include breakpoint(medium) {
+    height: 75px;
+  }
+  
+  @include breakpoint(large) {
+    height: 100px;
+  }
+}

@@ -1,0 +1,32 @@
+/* ---------------------------------
+=body
+--------------------------------- */
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+
+  overflow-x: hidden;
+
+  font-size: 1rem;
+  font-weight: 350;
+  background-color: var(--color-background);
+  color: var(--color-text);
+
+  @include breakpoint(medium) {
+    font-size: calc(18 / 16 * 1rem);
+  }
+}
+
+// main{
+//   overflow-x: hidden;
+// }
+
+body.has-menu {
+  overflow-y: hidden;
+
+  @include breakpoint(medium) {
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,52 @@
+/* ---------------------------------
+=spacing utilities
+--------------------------------- */
+
+// ---------------------------------
+// variables
+// ---------------------------------
+
+$spacing-map: (
+  "none": var(--spacing-none),
+  "xxs": var(--spacing-xxs),
+  "xs": var(--spacing-xs),
+  "s": var(--spacing-s),
+  "m": var(--spacing-m),
+  "l": var(--spacing-l),
+  "xl": var(--spacing-xl),
+  "xxl": var(--spacing-xxl),
+) !default;
+
+// ---------------------------------
+// base classes
+// ---------------------------------
+
+@each $name, $value in $spacing-map {
+  // margins
+  .u-mt-#{$name} {
+    margin-top: $value !important;
+  }
+  .u-mr-#{$name} {
+    margin-right: $value !important;
+  }
+  .u-mb-#{$name} {
+    margin-bottom: $value !important;
+  }
+  .u-ml-#{$name} {
+    margin-left: $value !important;
+  }
+
+  // paddings
+  .u-pt-#{$name} {
+    padding-top: $value !important;
+  }
+  .u-pr-#{$name} {
+    padding-right: $value !important;
+  }
+  .u-pb-#{$name} {
+    padding-bottom: $value !important;
+  }
+  .u-pl-#{$name} {
+    padding-left: $value !important;
+  }
+}
