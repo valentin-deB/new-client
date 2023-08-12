@@ -6,7 +6,7 @@ const AIRTABLE_TABLE_NAME = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
 
 const AIRTABLE_ENDPOINT = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`;
 
-export const addRecord = async (data: Record<string, any>) => {
+export const addRecord = async (data: Record<string, unknown>) => {
     try {
         const response = await axios.post(AIRTABLE_ENDPOINT, {
             fields: data
