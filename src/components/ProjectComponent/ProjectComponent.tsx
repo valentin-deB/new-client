@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Info } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import GraphicalElement from "./GraphicalElement";
 
 const ProjectComponent: React.FC = () => {
   const navigate = useNavigate();
@@ -22,18 +23,34 @@ const ProjectComponent: React.FC = () => {
     missionDescription?: string;
     optimalDate?: string;
     limitDate?: string;
+    clientWebsite?: string;
+    clientLogo?: FileList;
+    [key: string]: unknown;
   }>({
     defaultValues: {
       projectType: [],
     },
   });
 
+  const [graphicElements, setGraphicElements] = useState([
+    { title: "", file: null },
+  ]);
+
+  const addNewGraphicElement = () => {
+    setGraphicElements([...graphicElements, { title: "", file: null }]);
+  };
+
+  const removeGraphicElement = (index: number) => {
+    const updatedElements = graphicElements.filter((_, i) => i !== index);
+    setGraphicElements(updatedElements);
+  };
+
   const [otherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("projectType");
 
   const onSubmit = (data: unknown) => {
     console.log(data);
-    navigate("/infos");
+    navigate("/inspirations");
   };
 
   return (
@@ -86,7 +103,6 @@ const ProjectComponent: React.FC = () => {
               </FormControl>
               {projectTypes?.includes("Autre") && (
                 <Tooltip
-                  className="c-tooltip"
                   arrow
                   title="Vous avez sélectionné autre, quel type de projet voulez-vous réaliser avec moi ?"
                 >
@@ -102,7 +118,6 @@ const ProjectComponent: React.FC = () => {
 
               {/* Description of the Mission */}
               <Tooltip
-                style={{fontSize: "14"}}
                 arrow
                 title="Décrivez précisément votre projet, la place que j'y prendrai et ce que vous attendez de moi"
               >
@@ -128,7 +143,6 @@ const ProjectComponent: React.FC = () => {
                 <Box display="flex" flexDirection="row" gap={2}>
                   {/* Optimal Date Field */}
                   <Tooltip
-                    style={{fontSize: "14"}}
                     arrow
                     title="Dans un monde parfait, pour quand doit-on finir ce projet ?"
                   >
@@ -154,7 +168,6 @@ const ProjectComponent: React.FC = () => {
                   <Tooltip
                     arrow
                     title="Date à partir de laquelle nous sommes obligés d'avoir terminé votre projet"
-                    style={{fontSize: "14"}}
                   >
                     <Box>
                       <Controller
@@ -177,13 +190,59 @@ const ProjectComponent: React.FC = () => {
                   {/* Info button */}
                   <Box display="flex" alignItems="center" marginLeft={2}>
                     <Tooltip
-                      title="Avoir ces deux extrêmes permet de mieux évaluer le temps disponible, et donc le niveau de complexité et de précision vers lequel nous pouvons amener le projet."
                       arrow
+                      title={
+                        <Typography variant="body2">
+                          Avoir ces deux extrêmes permet de mieux évaluer le
+                          temps disponible, et donc le niveau de complexité et
+                          de précision vers lequel nous pouvons amener le
+                          projet.
+                        </Typography>
+                      }
                     >
                       <Info color="action" />
                     </Tooltip>
                   </Box>
                 </Box>
+              </Box>
+            </Box>
+
+            {/* Client's Website */}
+            <Controller
+              name="clientWebsite"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField {...field} label="Site internet" fullWidth />
+              )}
+            />
+
+            {/* Graphical Elements */}
+            <Box>
+              <Box display="flex" flexDirection="column" gap={2}>
+                <Typography variant="h4" className="c-form__title">
+                  Éléments graphiques
+                </Typography>
+                <Typography variant="body1">
+                  Ajoutez ici les éléments graphiques que vous souhaitez
+                  partager avec moi pour le projet. Cela pourrait inclure des
+                  logos, des images, des illustrations, etc.
+                </Typography>
+                {graphicElements.map((_, index) => (
+                  <GraphicalElement
+                    key={index}
+                    index={index}
+                    control={control}
+                    removeGraphicElement={() => removeGraphicElement(index)}
+                  />
+                ))}
+                <Button
+                  variant="outlined"
+                  onClick={addNewGraphicElement}
+                  style={{ marginTop: "10px" }}
+                >
+                  Ajouter un nouvel élément graphique
+                </Button>
               </Box>
             </Box>
             <Button type="submit">Sauver</Button>
