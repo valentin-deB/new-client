@@ -27,10 +27,10 @@ const InspirationImage: React.FC<InspirationImageProps> = ({
       <Stack flexDirection="row" alignItems="center" gap={2}>
         <img
           src={URL.createObjectURL(file)}
-          alt="Inspiration"
+          alt={title}
           style={{ maxWidth: "120px", maxHeight: "120px", borderRadius: "5px", border: "1px solid #C4C4C4"}}
         />
-        <Stack flexDirection="column" gap={1}  width="100%">
+        <Stack flexDirection="column" gap={1} width="100%">
           <TextField
             label="Title"
             value={title}

@@ -17,4 +17,9 @@ function App() {
     );
 }
 
+// TODO: Save all the infos to airtable at the end of the form
+// TODO: Add a résumé of the informations gived by the user at the end of the form
+// TODO: Add a button to edit the informations gived by the user at the end of the form
+//TODO: add a footer with the pagination of the form
+
 export default App;

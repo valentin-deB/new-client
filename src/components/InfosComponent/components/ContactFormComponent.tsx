@@ -1,11 +1,11 @@
 import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
-import { TextField, Box, Button } from '@mui/material';
+import { TextField, Button, Stack } from '@mui/material';
 import PhoneInput from "react-phone-input-2";
 
 interface ContactFormProps {
   control: UseFormReturn['control'];
-  contact: { clientForename: string; clientName: string; email: string; phone: string };
+  contact: { ClientForename: string; ClientName: string; Email: string; Phone: string };
   index: number;
   onDelete: (index: number) => void;
   contactsLength: number;
@@ -13,12 +13,12 @@ interface ContactFormProps {
 
 const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, index, onDelete, contactsLength }) => {
   return (
-    <Box display="flex" flexDirection="column" gap={2}>
-      <Box display="flex" flexDirection="row" gap={1}>
+    <Stack gap={2}>
+      <Stack flexDirection="row" gap={1}>
         <Controller
           name={`contacts[${index}].clientForename`}
           control={control}
-          defaultValue={contact.clientForename}
+          defaultValue={contact.ClientForename}
           render={({ field }) => (
             <TextField {...field} label="Prénom" required />
           )}
@@ -26,16 +26,16 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
         <Controller
           name={`contacts[${index}].clientName`}
           control={control}
-          defaultValue={contact.clientName}
+          defaultValue={contact.ClientName}
           render={({ field }) => (
             <TextField {...field} label="Nom" required />
           )}
         />
-      </Box>
+      </Stack>
       <PhoneInput
         containerClass="c-form__phone"
         country={"be"}
-        value={contact.phone}
+        value={contact.Phone}
         inputProps={{
             required: true,
           }}
@@ -43,7 +43,7 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
       <Controller
         name={`contacts[${index}].email`}
         control={control}
-        defaultValue={contact.email}
+        defaultValue={contact.Email}
         render={({ field }) => (
           <TextField
             {...field}
@@ -60,7 +60,7 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
           Supprimer le contact
         </Button>
       )}
-    </Box>
+    </Stack>
   );
 };
 

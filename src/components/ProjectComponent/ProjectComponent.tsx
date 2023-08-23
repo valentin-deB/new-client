@@ -1,5 +1,8 @@
+//React imports
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+
+//MUI imports
 import {
   TextField,
   Button,
@@ -11,22 +14,28 @@ import {
   MenuItem,
   Tooltip,
   Typography,
+  Stack,
 } from "@mui/material";
 import { Info } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import GraphicalElement from "./GraphicalElement";
+
+//Hooks imports
+
+//Components imports
+import GraphicalElement from "./components/GraphicalElement";
+
+export type ProjectData = {
+  projectType?: string[]; 
+  missionDescription?: string;
+  optimalDate?: string;
+  limitDate?: string;
+  clientWebsite?: string;
+  clientLogo?: FileList;
+  [key: string]: unknown;
+};
 
 const ProjectComponent: React.FC = () => {
-  const navigate = useNavigate();
-  const { control, handleSubmit, watch } = useForm<{
-    projectType: string[];
-    missionDescription?: string;
-    optimalDate?: string;
-    limitDate?: string;
-    clientWebsite?: string;
-    clientLogo?: FileList;
-    [key: string]: unknown;
-  }>({
+  
+  const { control, handleSubmit, watch } = useForm<ProjectData>({
     defaultValues: {
       projectType: [],
     },
@@ -48,29 +57,25 @@ const ProjectComponent: React.FC = () => {
   const [otherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("projectType");
 
-  const onSubmit = (data: unknown) => {
-    console.log(data);
-    navigate("/inspirations");
+  //Save to Airtable
+  const { saveToAirtable } = useSaveToAirtable('/project');
+  
+  const onSubmit = (data: ProjectData) => {  
+    saveToAirtable("Projects", data);
   };
 
   return (
     <Box className="c-pagesection">
       <Box className="l-container l-container--small">
-        <Box
+        <Stack
           component="form"
-          className="c-form"
           onSubmit={handleSubmit(onSubmit)}
-          display="flex"
-          flexDirection="column"
           gap={4}
         >
-          <Box
-            className="c-form__layout"
-            display="flex"
-            flexDirection="column"
+          <Stack
             gap={4}
           >
-            <Box display="flex" flexDirection="column" gap={2}>
+            <Stack gap={2}>
               <Typography variant="h4" className="c-form__title">
                 Details sur le projet
               </Typography>
@@ -139,8 +144,8 @@ const ProjectComponent: React.FC = () => {
                   />
                 </Box>
               </Tooltip>
-              <Box display="flex" flexDirection="column" gap={2}>
-                <Box display="flex" flexDirection="row" gap={2}>
+              <Stack gap={2}>
+                <Stack flexDirection="row" gap={2}>
                   {/* Optimal Date Field */}
                   <Tooltip
                     arrow
@@ -188,7 +193,7 @@ const ProjectComponent: React.FC = () => {
                     </Box>
                   </Tooltip>
                   {/* Info button */}
-                  <Box display="flex" alignItems="center" marginLeft={2}>
+                  <Stack flexDirection="row" alignItems="center" marginLeft={2}>
                     <Tooltip
                       arrow
                       title={
@@ -202,10 +207,10 @@ const ProjectComponent: React.FC = () => {
                     >
                       <Info color="action" />
                     </Tooltip>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Stack>
 
             {/* Client's Website */}
             <Controller
@@ -219,13 +224,12 @@ const ProjectComponent: React.FC = () => {
 
             {/* Graphical Elements */}
             <Box>
-              <Box display="flex" flexDirection="column" gap={2}>
+              <Stack gap={2}>
                 <Typography variant="h4" className="c-form__title">
                   Éléments graphiques
                 </Typography>
                 <Typography variant="body1">
-                  Ajoutez ici les éléments graphiques que vous souhaitez
-                  partager avec moi pour le projet. Cela pourrait inclure des
+                  Ajoutez ici les éléments graphiques que vous avez déjà pour votre projet/entreprise. Cela pourrait inclure des
                   logos, des images, des illustrations, etc.
                 </Typography>
                 {graphicElements.map((_, index) => (
@@ -243,11 +247,11 @@ const ProjectComponent: React.FC = () => {
                 >
                   Ajouter un nouvel élément graphique
                 </Button>
-              </Box>
+              </Stack>
             </Box>
-            <Button type="submit">Sauver</Button>
-          </Box>
-        </Box>
+            <Button variant="contained" type="submit">Sauver</Button>
+          </Stack>
+        </Stack>
       </Box>
     </Box>
   );
