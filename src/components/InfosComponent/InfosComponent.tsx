@@ -1,9 +1,14 @@
+// React Imports
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+// MUI imports
 import { TextField, Button, Box, Typography, Stack } from "@mui/material";
 import "react-phone-input-2/lib/material.css";
+//Components imports
 import ContactFormComponent from "./components/ContactFormComponent";
+//Hooks imports
 import { useGoToPage } from "../hooks/useGoToPage";
+//Services imports
 import { addRecord } from "../services/airtableService";
 
 interface Contact {
@@ -22,6 +27,7 @@ interface CompanyData {
 }
 
 const IntroComponent: React.FC = () => {
+  
   const defaultContact: Contact = {
     ClientForename: "",
     ClientName: "",

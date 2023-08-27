@@ -1,7 +1,6 @@
 //React imports
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-
 //MUI imports
 import {
   TextField,
@@ -16,76 +15,73 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-
 import { Info } from "@mui/icons-material";
-
 //Hooks imports
 import { useGoToPage } from "../hooks/useGoToPage";
-
 //Services imports
 import { addRecord } from "../services/airtableService";
-
 //Components imports
 import GraphicalElement from "./components/GraphicalElement";
 
-export type ProjectData = {
-  projectType?: string[];
-  missionDescription?: string;
-  optimalDate?: string;
-  limitDate?: string;
-  clientWebsite?: string;
-  clientLogo?: FileList;
-  [key: string]: unknown;
+
+interface GraphicalElement {
+  Title: string;
+  File: string | null;
+}
+
+type ProjectData = {
+  ProjectType: string[];
+  OtherProjectType?: string;
+  MissionDescription?: string;
+  OptimalDate?: string;
+  LimitDate?: string;
+  ClientWebsite?: string;
+  graphicalElements?: GraphicalElement[];
 };
 
 const ProjectComponent: React.FC = () => {
+
+  const defaultGraphicalElement: GraphicalElement = {
+    Title: "",
+    File: "",
+  };
+
   const { control, handleSubmit, watch } = useForm<ProjectData>({
     defaultValues: {
-      projectType: [],
-      optimalDate: new Date().toISOString().slice(0, 10),
-      limitDate: new Date().toISOString().slice(0, 10),
+      ProjectType: [],
+      OtherProjectType: "",
+      MissionDescription: "",
+      OptimalDate: new Date().toISOString().slice(0, 10),
+      LimitDate: new Date().toISOString().slice(0, 10),
+      ClientWebsite: "",
+      graphicalElements: [defaultGraphicalElement],
     },
   });
-
-  type GraphicElement = {
-    title: string;
-    file: string | null;
-  };
   
-  const [graphicElements, setGraphicElements] = useState<GraphicElement[]>([
-    { title: "", file: null },
-  ]);
+  const [graphicalElements, setGraphicalElements] = useState<GraphicalElement[]>([defaultGraphicalElement]);
 
-  const { goToPage } = useGoToPage("/project");
+  const { goToPage } = useGoToPage("/inspirations");
 
-  const addNewGraphicElement = () => {
-    setGraphicElements([...graphicElements, { title: "", file: null }]);
-  };
-
-  const removeGraphicElement = (index: number) => {
-    const updatedElements = graphicElements.filter((_, i) => i !== index);
-    setGraphicElements(updatedElements);
-  };
 
   const updateFileUrl = (index: number, url: string) => {
-    const updatedElements = [...graphicElements];
-    updatedElements[index].file = url;
-    setGraphicElements(updatedElements);
+    const updatedElements = [...graphicalElements];
+    updatedElements[index].File = url;
+    setGraphicalElements(updatedElements);
   };
 
-  const [otherProjectType, setOtherProjectType] = useState("");
-  const projectTypes = watch("projectType");
+  const [OtherProjectType, setOtherProjectType] = useState("");
+  const projectTypes = watch("ProjectType");
 
   const onSubmit = async (data: ProjectData) => {
     // Create project
+    console.log("ProjectType:", data.ProjectType)
     const projectData = {
-      ProjectType: data.projectType,
-      OtherProjectType: otherProjectType,
-      MissionDescription: data.missionDescription,
-      OptimalDate: data.optimalDate,
-      LimitDate: data.limitDate,
-      ClientWebsite: data.clientWebsite,
-      GraphicElements: JSON.stringify(graphicElements),
+      ProjectType: data.ProjectType,
+      OtherProjectType: data.OtherProjectType,
+      MissionDescription: data.MissionDescription,
+      OptimalDate: data.OptimalDate,
+      LimitDate: data.LimitDate,
+      ClientWebsite: data.ClientWebsite,
     };
     console.log("Project data:", projectData)
     const projectResponse = await addRecord("Projects", projectData);
@@ -94,18 +90,19 @@ const ProjectComponent: React.FC = () => {
     const projectId = projectResponse.id;
 
     // Save Graphical Elements
-    for (const element of graphicElements) {
-      const elementData = {
-        Title: element.title,
-        File: element.file,
-        Project: [projectId],
-      };
-      const elementResponse = await addRecord("GraphicalElements", elementData);
-      console.log("Graphical Element saved:", elementResponse);
+    if (data.graphicalElements !== undefined){
+      for (const element of data.graphicalElements) {
+        const elementData = {
+          Title: element.Title,
+          File: element.File,
+          Project: [projectId],
+        };
+        const elementResponse = await addRecord("GraphicalElements", elementData);
+        console.log("Graphical Element saved:", elementResponse);
+      }
     }
-
     // Go to next page
-    goToPage();
+    // goToPage();
   };
 
   return (
@@ -121,10 +118,10 @@ const ProjectComponent: React.FC = () => {
               <FormControl>
                 <InputLabel>Type du projet</InputLabel>
                 <Controller
-                  name="projectType"
+                  name="ProjectType"
                   control={control}
                   render={({ field }) => (
-                    <Select {...field} multiple>
+                    <Select required {...field} multiple>
                       {[
                         "Design",
                         "Branding",
@@ -151,8 +148,9 @@ const ProjectComponent: React.FC = () => {
                 >
                   <Box width="fit-content">
                     <TextField
+                      name="OtherProjectType"
                       label="Précisez autre type"
-                      value={otherProjectType}
+                      value={OtherProjectType}
                       onChange={(e) => setOtherProjectType(e.target.value)}
                     />
                   </Box>
@@ -166,7 +164,7 @@ const ProjectComponent: React.FC = () => {
               >
                 <Box>
                   <Controller
-                    name="missionDescription"
+                    name="MissionDescription"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
@@ -191,7 +189,7 @@ const ProjectComponent: React.FC = () => {
                   >
                     <Box>
                       <Controller
-                        name="optimalDate"
+                        name="OptimalDate"
                         control={control}
                         render={({ field }) => (
                           <TextField
@@ -214,7 +212,7 @@ const ProjectComponent: React.FC = () => {
                   >
                     <Box>
                       <Controller
-                        name="limitDate"
+                        name="LimitDate"
                         control={control}
                         render={({ field }) => (
                           <TextField
@@ -252,7 +250,7 @@ const ProjectComponent: React.FC = () => {
 
             {/* Client's Website */}
             <Controller
-              name="clientWebsite"
+              name="ClientWebsite"
               control={control}
               defaultValue=""
               render={({ field }) => (
@@ -271,18 +269,31 @@ const ProjectComponent: React.FC = () => {
                   votre projet/entreprise. Cela pourrait inclure des logos, des
                   images, des illustrations, etc.
                 </Typography>
-                {graphicElements.map((_, index) => (
+                {graphicalElements.map((_, index) => (
                   <GraphicalElement
                     key={index}
                     index={index}
                     control={control}
-                    removeGraphicElement={() => removeGraphicElement(index)}
+                    graphicElement={graphicalElements}
+                    onDelete={(idx) => {
+                      const updatedgraphicalElements = [...graphicalElements];
+                      updatedgraphicalElements.splice(idx, 1);
+                      setGraphicalElements(updatedgraphicalElements);
+                    }}
                     updateFileUrl={updateFileUrl}
                   />
                 ))}
                 <Button
                   variant="outlined"
-                  onClick={addNewGraphicElement}
+                  onClick={() => {
+                    setGraphicalElements([
+                      ...graphicalElements,
+                      {
+                        Title: "",
+                        File: "",
+                      },
+                    ]);
+                  }}
                   style={{ marginTop: "10px" }}
                 >
                   Ajouter un nouvel élément graphique

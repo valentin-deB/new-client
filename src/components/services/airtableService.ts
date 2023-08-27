@@ -8,7 +8,8 @@ export const addRecord = async (tableName: string, data: Record<string, unknown>
 
     try {
         const response = await axios.post(AIRTABLE_ENDPOINT, {
-            fields: data
+            fields: data,
+            typecast: true,
         }, {
             headers: {
                 'Authorization': `Bearer ${AIRTABLE_API_KEY}`,

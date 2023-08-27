@@ -1,66 +1,89 @@
-// React imports
-import React, { useState } from "react";
-import { Controller, Control } from "react-hook-form";
-
-// MUI imports
+import React, { useState, useEffect } from "react";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { TextField, Button, Box, Typography, Avatar } from "@mui/material";
+import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
-// Types imports
-import { ProjectData } from "../ProjectComponent";
-
-// Hooks imports
-import {useCloudinaryUpload} from '../../hooks/useCloudinaryUpload';
-
-interface GraphicalElementProps {
+interface GraphicalElementFormProps {
+  control: UseFormReturn["control"];
+  GraphicalElement: { Title: string; File: string };
   index: number;
-  control: Control<ProjectData>;
-  removeGraphicElement: () => void;
+  onDelete: (index: number) => void;
   updateFileUrl: (index: number, url: string) => void;
 }
 
-const GraphicalElement: React.FC<GraphicalElementProps> = ({
-  index,
+const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
   control,
-  removeGraphicElement,
+  index,
+  onDelete,
   updateFileUrl,
 }) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const { uploading, uploadedUrl, error, uploadToCloudinary } = useCloudinaryUpload();
+  const { uploading, uploadedUrl, error, uploadToCloudinary } =
+    useCloudinaryUpload();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      uploadToCloudinary(file);
+      await uploadToCloudinary(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      if (uploadedUrl) {
-        updateFileUrl(index, uploadedUrl);
-      }
     }
   };
+
+  useEffect(() => {
+    if (uploadedUrl) {
+      updateFileUrl(index, uploadedUrl);
+    }
+  }, [uploadedUrl]);
 
   return (
     <Box>
       <Controller
-        name={`elementTitle${index}`}
+        name={`GraphicalElement[${index}].Title`}
         control={control}
         defaultValue=""
         render={({ field }) => (
           <TextField
             {...field}
-            label="Titre de l'élément (Par exemple: Logo)"
+            label="Title"
+            required
             fullWidth
           />
         )}
       />
       <Controller
-        name={`elementFile${index}`}
+        name={`GraphicalElement[${index}].File`}
         control={control}
         render={({ field }) => (
-          <Box style={{ marginTop: "10px" }}>
+          <Box mt={2}>
+            {filePreview && (
+              <Box mt={2}>
+                <Typography variant="body2">Aperçu:</Typography>
+                <Avatar
+                  src={filePreview}
+                  variant="square"
+                  sx={{ width: 60, height: 60, mb: 2 }}
+                />
+              </Box>
+            )}
+            <Box mb={2}>
+              {uploading && (
+                <Typography variant="body2">
+                  Téléchargement en cours...
+                </Typography>
+              )}
+              {uploadedUrl && (
+                <Typography variant="body2">Téléchargement réussi !</Typography>
+              )}
+              {error && (
+                <Typography variant="body2">
+                  Erreur lors du téléchargement
+                </Typography>
+              )}
+            </Box>
             <Button variant="contained" component="label" color="primary">
               Sélectionner un fichier
               <input
@@ -69,27 +92,18 @@ const GraphicalElement: React.FC<GraphicalElementProps> = ({
                 hidden
                 {...field}
                 onChange={(e) => {
-                  field.onChange(e);
+                  field.onChange(uploadedUrl);
                   handleFileChange(e);
                 }}
                 value={undefined}
               />
             </Button>
-            {filePreview && (
-              <Box mt={2}>
-                <Typography variant="body2">Aperçu:</Typography>
-                <Avatar src={filePreview} variant="square" sx={{ width: 60, height: 60 }} />
-              </Box>
-            )}
-            {uploading && <Typography variant="body2">Téléchargement en cours...</Typography>}
-            {uploadedUrl && <Typography variant="body2">Téléchargement réussi !</Typography>}
-            {error && <Typography variant="body2">Erreur lors du téléchargement</Typography>}
             <Button
               variant="outlined"
-              onClick={removeGraphicElement}
+              onClick={() => onDelete(index)}
               style={{ marginLeft: "10px" }}
             >
-              Supprimer
+              Supprimer l'élement graphique
             </Button>
           </Box>
         )}
