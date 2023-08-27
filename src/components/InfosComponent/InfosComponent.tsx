@@ -4,7 +4,6 @@ import { TextField, Button, Box, Typography, Stack } from "@mui/material";
 import "react-phone-input-2/lib/material.css";
 import ContactFormComponent from "./components/ContactFormComponent";
 import { useGoToPage } from "../hooks/useGoToPage";
-import useCompanyExists from "../hooks/useCompanyExists";
 import { addRecord } from "../services/airtableService";
 
 interface Contact {
@@ -30,10 +29,7 @@ const IntroComponent: React.FC = () => {
     Phone: "",
   };
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<CompanyData>({
+  const { control, handleSubmit } = useForm<CompanyData>({
     defaultValues: {
       CompanyName: "",
       ShortDescription: "",
@@ -45,44 +41,32 @@ const IntroComponent: React.FC = () => {
 
   const [contacts, setContacts] = useState<Contact[]>([defaultContact]);
   const { goToPage } = useGoToPage("/project");
-  const { checkCompany } = useCompanyExists();
 
   const onSubmit = async (data: CompanyData) => {
-    if (!(await checkCompany(data.CompanyName, data.TvaNumber))) {
-      console.log("Company does not exist");
-      const companyData = {
-        CompanyName: data.CompanyName,
-        ShortDescription: data.ShortDescription,
-        TvaNumber: data.TvaNumber,
-        Address: data.Address,
+    const companyData = {
+      CompanyName: data.CompanyName,
+      ShortDescription: data.ShortDescription,
+      TvaNumber: data.TvaNumber,
+      Address: data.Address,
+    };
+
+    const companyResponse = await addRecord("Companies", companyData);
+    console.log("Company saved:", companyResponse);
+
+    const companyId = companyResponse.id;
+
+    for (const contact of data.contacts) {
+      const contactData = {
+        ClientForename: contact.ClientForename,
+        ClientName: contact.ClientName,
+        Email: contact.Email,
+        Phone: contact.Phone,
+        Company: [companyId],
       };
-
-      const companyResponse = await addRecord("Companies", companyData);
-
-      if (companyResponse) {
-        console.log("Company saved:", companyResponse);
-        const companyId = companyResponse.id;
-
-        for (const contact of data.contacts) {
-          const contactData = {
-            ClientForename: contact.ClientForename,
-            ClientName: contact.ClientName,
-            Email: contact.Email,
-            Phone: contact.Phone,
-            Company: [companyId],
-          };
-          const contactResponse = await addRecord("Contacts", contactData);
-          console.log("Contact saved:", contactResponse);
-        }
-
-        goToPage();
-      } else {
-        // Handle error
-      }
-    } else {
-      console.log("Company already exists");
-      // Handle the scenario when the company already exists
+      const contactResponse = await addRecord("Contacts", contactData);
+      console.log("Contact saved:", contactResponse);
     }
+    goToPage();
   };
 
   return (

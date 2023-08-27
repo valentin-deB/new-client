@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
-export const AIRTABLE_BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID;
+const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_KEY;
+const AIRTABLE_BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID;
 
 export const addRecord = async (tableName: string, data: Record<string, unknown>) => {
     const AIRTABLE_ENDPOINT = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${tableName}`;

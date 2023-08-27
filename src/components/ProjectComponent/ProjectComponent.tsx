@@ -16,15 +16,20 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
+
 import { Info } from "@mui/icons-material";
 
 //Hooks imports
+import { useGoToPage } from "../hooks/useGoToPage";
+
+//Services imports
+import { addRecord } from "../services/airtableService";
 
 //Components imports
 import GraphicalElement from "./components/GraphicalElement";
 
 export type ProjectData = {
-  projectType?: string[]; 
+  projectType?: string[];
   missionDescription?: string;
   optimalDate?: string;
   limitDate?: string;
@@ -34,16 +39,24 @@ export type ProjectData = {
 };
 
 const ProjectComponent: React.FC = () => {
-  
   const { control, handleSubmit, watch } = useForm<ProjectData>({
     defaultValues: {
       projectType: [],
+      optimalDate: new Date().toISOString().slice(0, 10),
+      limitDate: new Date().toISOString().slice(0, 10),
     },
   });
 
-  const [graphicElements, setGraphicElements] = useState([
+  type GraphicElement = {
+    title: string;
+    file: string | null;
+  };
+  
+  const [graphicElements, setGraphicElements] = useState<GraphicElement[]>([
     { title: "", file: null },
   ]);
+
+  const { goToPage } = useGoToPage("/project");
 
   const addNewGraphicElement = () => {
     setGraphicElements([...graphicElements, { title: "", file: null }]);
@@ -54,27 +67,52 @@ const ProjectComponent: React.FC = () => {
     setGraphicElements(updatedElements);
   };
 
+  const updateFileUrl = (index: number, url: string) => {
+    const updatedElements = [...graphicElements];
+    updatedElements[index].file = url;
+    setGraphicElements(updatedElements);
+  };
+
   const [otherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("projectType");
 
-  //Save to Airtable
-  const { saveToAirtable } = useSaveToAirtable('/project');
-  
-  const onSubmit = (data: ProjectData) => {  
-    saveToAirtable("Projects", data);
+  const onSubmit = async (data: ProjectData) => {
+    // Create project
+    const projectData = {
+      ProjectType: data.projectType,
+      OtherProjectType: otherProjectType,
+      MissionDescription: data.missionDescription,
+      OptimalDate: data.optimalDate,
+      LimitDate: data.limitDate,
+      ClientWebsite: data.clientWebsite,
+      GraphicElements: JSON.stringify(graphicElements),
+    };
+    console.log("Project data:", projectData)
+    const projectResponse = await addRecord("Projects", projectData);
+    console.log("Project saved:", projectResponse);
+
+    const projectId = projectResponse.id;
+
+    // Save Graphical Elements
+    for (const element of graphicElements) {
+      const elementData = {
+        Title: element.title,
+        File: element.file,
+        Project: [projectId],
+      };
+      const elementResponse = await addRecord("GraphicalElements", elementData);
+      console.log("Graphical Element saved:", elementResponse);
+    }
+
+    // Go to next page
+    goToPage();
   };
 
   return (
     <Box className="c-pagesection">
       <Box className="l-container l-container--small">
-        <Stack
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-          gap={4}
-        >
-          <Stack
-            gap={4}
-          >
+        <Stack component="form" onSubmit={handleSubmit(onSubmit)} gap={4}>
+          <Stack gap={4}>
             <Stack gap={2}>
               <Typography variant="h4" className="c-form__title">
                 Details sur le projet
@@ -111,7 +149,7 @@ const ProjectComponent: React.FC = () => {
                   arrow
                   title="Vous avez sélectionné autre, quel type de projet voulez-vous réaliser avec moi ?"
                 >
-                  <Box>
+                  <Box width="fit-content">
                     <TextField
                       label="Précisez autre type"
                       value={otherProjectType}
@@ -229,8 +267,9 @@ const ProjectComponent: React.FC = () => {
                   Éléments graphiques
                 </Typography>
                 <Typography variant="body1">
-                  Ajoutez ici les éléments graphiques que vous avez déjà pour votre projet/entreprise. Cela pourrait inclure des
-                  logos, des images, des illustrations, etc.
+                  Ajoutez ici les éléments graphiques que vous avez déjà pour
+                  votre projet/entreprise. Cela pourrait inclure des logos, des
+                  images, des illustrations, etc.
                 </Typography>
                 {graphicElements.map((_, index) => (
                   <GraphicalElement
@@ -238,6 +277,7 @@ const ProjectComponent: React.FC = () => {
                     index={index}
                     control={control}
                     removeGraphicElement={() => removeGraphicElement(index)}
+                    updateFileUrl={updateFileUrl}
                   />
                 ))}
                 <Button
@@ -249,7 +289,9 @@ const ProjectComponent: React.FC = () => {
                 </Button>
               </Stack>
             </Box>
-            <Button variant="contained" type="submit">Sauver</Button>
+            <Button variant="contained" type="submit">
+              Sauver
+            </Button>
           </Stack>
         </Stack>
       </Box>

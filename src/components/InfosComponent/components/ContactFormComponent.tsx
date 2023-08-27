@@ -16,7 +16,7 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
     <Stack gap={2}>
       <Stack flexDirection="row" gap={1}>
         <Controller
-          name={`contacts[${index}].clientForename`}
+          name={`contacts[${index}].ClientForename`}
           control={control}
           defaultValue={contact.ClientForename}
           render={({ field }) => (
@@ -24,7 +24,7 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
           )}
         />
         <Controller
-          name={`contacts[${index}].clientName`}
+          name={`contacts[${index}].ClientName`}
           control={control}
           defaultValue={contact.ClientName}
           render={({ field }) => (
@@ -32,16 +32,24 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
           )}
         />
       </Stack>
-      <PhoneInput
-        containerClass="c-form__phone"
-        country={"be"}
-        value={contact.Phone}
-        inputProps={{
-            required: true,
-          }}
+      <Controller
+        name={`contacts[${index}].Phone`}
+        control={control}
+        defaultValue={contact.Phone}
+        render={({ field }) => (
+          <PhoneInput
+            containerClass="c-form__phone"
+            country={"be"}
+            value={field.value}
+            onChange={value => field.onChange(value)}
+            inputProps={{
+              required: true,
+            }}
+          />
+        )}
       />
       <Controller
-        name={`contacts[${index}].email`}
+        name={`contacts[${index}].Email`}
         control={control}
         defaultValue={contact.Email}
         render={({ field }) => (
