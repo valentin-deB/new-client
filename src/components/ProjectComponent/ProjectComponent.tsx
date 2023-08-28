@@ -1,5 +1,5 @@
 //React imports
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 //MUI imports
 import {
@@ -23,11 +23,10 @@ import { addRecord } from "../services/airtableService";
 //Components imports
 import GraphicalElement from "./components/GraphicalElement";
 
-
-interface GraphicalElement {
+type GraphicalElement = {
   Title: string;
   File: string | null;
-}
+};
 
 type ProjectData = {
   ProjectType: string[];
@@ -40,13 +39,13 @@ type ProjectData = {
 };
 
 const ProjectComponent: React.FC = () => {
-
   const defaultGraphicalElement: GraphicalElement = {
     Title: "",
     File: "",
   };
 
-  const { control, handleSubmit, watch } = useForm<ProjectData>({
+  const { control, handleSubmit,setValue, watch } = 
+  useForm<ProjectData>({
     defaultValues: {
       ProjectType: [],
       OtherProjectType: "",
@@ -57,50 +56,59 @@ const ProjectComponent: React.FC = () => {
       graphicalElements: [defaultGraphicalElement],
     },
   });
-  
-  const [graphicalElements, setGraphicalElements] = useState<GraphicalElement[]>([defaultGraphicalElement]);
+
+  const [graphicalElements, setGraphicalElements] = useState<
+    GraphicalElement[]
+  >([defaultGraphicalElement]);
 
   const { goToPage } = useGoToPage("/inspirations");
 
-
   const updateFileUrl = (index: number, url: string) => {
-    const updatedElements = [...graphicalElements];
-    updatedElements[index].File = url;
-    setGraphicalElements(updatedElements);
+    const newGraphicalElements = [...graphicalElements];
+    newGraphicalElements[index].File = url;
+    setGraphicalElements(newGraphicalElements);
+    const fieldName = `graphicalElements[${index}].File` as const;
+    setValue(fieldName, url);
   };
 
   const [OtherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("ProjectType");
 
+  
+
   const onSubmit = async (data: ProjectData) => {
     // Create project
-    console.log("ProjectType:", data.ProjectType)
     const projectData = {
       ProjectType: data.ProjectType,
-      OtherProjectType: data.OtherProjectType,
+      OtherProjectType: OtherProjectType,
       MissionDescription: data.MissionDescription,
       OptimalDate: data.OptimalDate,
       LimitDate: data.LimitDate,
       ClientWebsite: data.ClientWebsite,
     };
-    console.log("Project data:", projectData)
     const projectResponse = await addRecord("Projects", projectData);
     console.log("Project saved:", projectResponse);
 
     const projectId = projectResponse.id;
+    console.log("data for graphicalElement",data.graphicalElements);
 
     // Save Graphical Elements
-    if (data.graphicalElements !== undefined){
+    if (data.graphicalElements !== undefined) {
       for (const element of data.graphicalElements) {
         const elementData = {
           Title: element.Title,
           File: element.File,
-          Project: [projectId],
+          Project: projectId,
         };
-        const elementResponse = await addRecord("GraphicalElements", elementData);
+        console.log("elementData:", elementData)
+        const elementResponse = await addRecord(
+          "GraphicalElements",
+          elementData
+        );
         console.log("Graphical Element saved:", elementResponse);
       }
     }
+
     // Go to next page
     // goToPage();
   };
@@ -269,16 +277,16 @@ const ProjectComponent: React.FC = () => {
                   votre projet/entreprise. Cela pourrait inclure des logos, des
                   images, des illustrations, etc.
                 </Typography>
-                {graphicalElements.map((_, index) => (
+                {graphicalElements.map((element, index) => (
                   <GraphicalElement
                     key={index}
                     index={index}
                     control={control}
-                    graphicElement={graphicalElements}
+                    graphicalElement={element}
                     onDelete={(idx) => {
-                      const updatedgraphicalElements = [...graphicalElements];
-                      updatedgraphicalElements.splice(idx, 1);
-                      setGraphicalElements(updatedgraphicalElements);
+                      const updatedGraphicalElements = [...graphicalElements];
+                      updatedGraphicalElements.splice(idx, 1);
+                      setGraphicalElements(updatedGraphicalElements);
                     }}
                     updateFileUrl={updateFileUrl}
                   />

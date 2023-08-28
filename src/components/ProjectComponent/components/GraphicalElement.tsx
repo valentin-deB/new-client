@@ -5,7 +5,7 @@ import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
 interface GraphicalElementFormProps {
   control: UseFormReturn["control"];
-  GraphicalElement: { Title: string; File: string };
+  graphicalElement: { Title: string; File: string };
   index: number;
   onDelete: (index: number) => void;
   updateFileUrl: (index: number, url: string) => void;
@@ -13,6 +13,7 @@ interface GraphicalElementFormProps {
 
 const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
   control,
+  graphicalElement,
   index,
   onDelete,
   updateFileUrl,
@@ -32,7 +33,6 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
       reader.readAsDataURL(file);
     }
   };
-
   useEffect(() => {
     if (uploadedUrl) {
       updateFileUrl(index, uploadedUrl);
@@ -42,7 +42,7 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
   return (
     <Box>
       <Controller
-        name={`GraphicalElement[${index}].Title`}
+        name={`graphicalElements[${index}].Title`}
         control={control}
         defaultValue=""
         render={({ field }) => (
@@ -55,7 +55,7 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
         )}
       />
       <Controller
-        name={`GraphicalElement[${index}].File`}
+        name={`graphicalElements[${index}].File`}
         control={control}
         render={({ field }) => (
           <Box mt={2}>
@@ -92,8 +92,7 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
                 hidden
                 {...field}
                 onChange={(e) => {
-                  field.onChange(uploadedUrl);
-                  handleFileChange(e);
+                  handleFileChange(e)
                 }}
                 value={undefined}
               />
