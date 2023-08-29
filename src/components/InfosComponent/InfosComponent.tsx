@@ -4,6 +4,8 @@ import { useForm, Controller } from "react-hook-form";
 // MUI imports
 import { TextField, Button, Box, Typography, Stack } from "@mui/material";
 import "react-phone-input-2/lib/material.css";
+// Company data context imports
+import { useCompanyDataContext } from '../../context/CompanyDataContext';
 //Components imports
 import ContactFormComponent from "./components/ContactFormComponent";
 //Hooks imports
@@ -48,6 +50,8 @@ const IntroComponent: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([defaultContact]);
   const { goToPage } = useGoToPage("/project");
 
+  const { updateCompanyData } = useCompanyDataContext()
+
   const onSubmit = async (data: CompanyData) => {
     const companyData = {
       CompanyName: data.CompanyName,
@@ -71,6 +75,15 @@ const IntroComponent: React.FC = () => {
       };
       const contactResponse = await addRecord("Contacts", contactData);
       console.log("Contact saved:", contactResponse);
+
+      updateCompanyData({
+        CompanyName: data.CompanyName,
+        ShortDescription: data.ShortDescription,
+        TvaNumber: data.TvaNumber,
+        Address: data.Address,
+        contacts: data.contacts,
+        CompanyId: companyId,
+      });
     }
     goToPage();
   };

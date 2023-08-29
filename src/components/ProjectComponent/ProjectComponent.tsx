@@ -1,6 +1,8 @@
 //React imports
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+// Data context imports
+import { useCompanyDataContext } from '../../context/CompanyDataContext';
 //MUI imports
 import {
   TextField,
@@ -74,7 +76,14 @@ const ProjectComponent: React.FC = () => {
   const [OtherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("ProjectType");
 
-  
+  const { companyData } = useCompanyDataContext();
+  var companyId = companyData?.CompanyId;
+  console.log("companyData:", companyData);
+  console.log("companyId:", companyId)
+  if (!companyData) {
+    console.log("No company data found");
+    companyId = "unknown";
+  }
 
   const onSubmit = async (data: ProjectData) => {
     // Create project
@@ -85,6 +94,7 @@ const ProjectComponent: React.FC = () => {
       OptimalDate: data.OptimalDate,
       LimitDate: data.LimitDate,
       ClientWebsite: data.ClientWebsite,
+      Company: [companyId],
     };
     const projectResponse = await addRecord("Projects", projectData);
     console.log("Project saved:", projectResponse);
