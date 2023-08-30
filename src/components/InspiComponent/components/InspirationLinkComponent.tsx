@@ -1,48 +1,59 @@
+// React import
 import React from "react";
+import { Controller, UseFormReturn } from "react-hook-form";
+// MUI import
 import { TextField, Button, Stack } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type InspirationLinkProps = {
-  title: string;
-  description: string;
-  link: string;
+  control: UseFormReturn["control"];
   index: number;
-  removeLink: (index: number) => void;
-  updateLink: (
-    index: number,
-    updatedLink: { title?: string; description?: string; link?: string }
-  ) => void;
+  onDelete: (index: number) => void;
 };
 
 const InspirationLink: React.FC<InspirationLinkProps> = ({
-  title,
-  description,
-  link,
+  control,
   index,
-  removeLink,
-  updateLink,
+  onDelete,
 }) => {
   return (
-    <Stack gap={2}>
-      <Stack flexDirection="row" gap={1}>
-        <TextField
-          label="Titre"
-          value={title}
-          onChange={(e) => updateLink(index, { title: e.target.value })}
-        />
-        <TextField
-          label="Lien"
-          value={link}
-          onChange={(e) => updateLink(index, { link: e.target.value })}
+    <Stack flexDirection="row" gap={1} width={"100%"} alignItems={"center"}>
+      <Stack gap={1} width={"100%"}>
+        <Stack flexDirection="row" gap={1}>
+          <Controller
+            name={`inspirationLinks[${index}].Title`}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField {...field} label="Titre" required style={{ width: "100%" }}  />
+            )}
+          />
+          <Controller
+            name={`inspirationLinks[${index}].Link`}
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField {...field} label="Link" required style={{ width: "100%" }} />
+            )}
+          />
+        </Stack>
+        <Controller
+          name={`inspirationLinks[${index}].Description`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Qu'est ce qui est inspirant ?"
+              multiline
+              rows={3}
+            />
+          )}
         />
       </Stack>
-      <TextField
-        label="Description"
-        value={description}
-        multiline
-        onChange={(e) => updateLink(index, { description: e.target.value })}
-      />
-      <Button variant="outlined" startIcon={<DeleteIcon />}  onClick={() => removeLink(index)}>Retirer</Button>
+      <Button variant="outlined" style={{aspectRatio: "1/1"}} onClick={() => onDelete(index)}>
+        <DeleteIcon />
+      </Button>
     </Stack>
   );
 };

@@ -4,6 +4,8 @@ import { Controller, UseFormReturn } from 'react-hook-form';
 // MUI imports
 import { TextField, Button, Stack } from '@mui/material';
 import PhoneInput from "react-phone-input-2";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 interface ContactFormProps {
   control: UseFormReturn['control'];
@@ -65,9 +67,10 @@ const ContactFormComponent: React.FC<ContactFormProps> = ({ control, contact, in
       />
       {contactsLength > 1 && (
         <Button
+        //ToDo: adapt on delete based on the project graphical component
           onClick={() => onDelete(index)}
         >
-          Supprimer le contact
+          <DeleteIcon />
         </Button>
       )}
     </Stack>

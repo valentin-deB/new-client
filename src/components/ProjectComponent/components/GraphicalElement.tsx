@@ -1,11 +1,14 @@
+// React import
 import React, { useState, useEffect } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
+// MUI import
 import { TextField, Button, Box, Typography, Avatar } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+// Hooks import
 import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
 interface GraphicalElementFormProps {
   control: UseFormReturn["control"];
-  graphicalElement: { Title: string; File: string };
   index: number;
   onDelete: (index: number) => void;
   updateFileUrl: (index: number, url: string) => void;
@@ -13,7 +16,6 @@ interface GraphicalElementFormProps {
 
 const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
   control,
-  graphicalElement,
   index,
   onDelete,
   updateFileUrl,
@@ -102,7 +104,7 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
               onClick={() => onDelete(index)}
               style={{ marginLeft: "10px" }}
             >
-              Supprimer l'élement graphique
+              <DeleteIcon/>
             </Button>
           </Box>
         )}

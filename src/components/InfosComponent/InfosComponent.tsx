@@ -150,9 +150,9 @@ const IntroComponent: React.FC = () => {
                   contact={contact}
                   index={index}
                   key={index}
-                  onDelete={(idx) => {
+                  onDelete={() => {
                     const updatedContacts = [...contacts];
-                    updatedContacts.splice(idx, 1);
+                    updatedContacts.splice(index, 1);
                     setContacts(updatedContacts);
                   }}
                   contactsLength={contacts.length}

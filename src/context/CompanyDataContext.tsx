@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+//Type imports
+
 // Define the type for the context value
 type CompanyDataContextType = {
   companyData: unknown;

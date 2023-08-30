@@ -1,8 +1,9 @@
 //React imports
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 // Data context imports
-import { useCompanyDataContext } from '../../context/CompanyDataContext';
+import { useCompanyDataContext } from "../../context/CompanyDataContext";
 //MUI imports
 import {
   TextField,
@@ -22,15 +23,19 @@ import { Info } from "@mui/icons-material";
 import { useGoToPage } from "../hooks/useGoToPage";
 //Services imports
 import { addRecord } from "../services/airtableService";
+// Utils imports
+import { handleDeleteElement } from '../utils/handleDeleteElement';
 //Components imports
 import GraphicalElement from "./components/GraphicalElement";
 
 type GraphicalElement = {
   Title: string;
   File: string | null;
+  Project: string;
+  id: string;
 };
 
-type ProjectData = {
+export type ProjectData = {
   ProjectType: string[];
   OtherProjectType?: string;
   MissionDescription?: string;
@@ -41,13 +46,16 @@ type ProjectData = {
 };
 
 const ProjectComponent: React.FC = () => {
+  const { goToPage } = useGoToPage("/inspirations");
+
   const defaultGraphicalElement: GraphicalElement = {
     Title: "",
     File: "",
+    Project: "",
+    id: uuidv4(),
   };
 
-  const { control, handleSubmit,setValue, watch } = 
-  useForm<ProjectData>({
+  const { control, handleSubmit, setValue, watch } = useForm<ProjectData>({
     defaultValues: {
       ProjectType: [],
       OtherProjectType: "",
@@ -58,12 +66,14 @@ const ProjectComponent: React.FC = () => {
       graphicalElements: [defaultGraphicalElement],
     },
   });
-
+  
   const [graphicalElements, setGraphicalElements] = useState<
-    GraphicalElement[]
+  GraphicalElement[]
   >([defaultGraphicalElement]);
-
-  const { goToPage } = useGoToPage("/inspirations");
+  
+  const handleDelete = (elementIdToDelete: string) => {
+    handleDeleteElement(graphicalElements, setGraphicalElements, elementIdToDelete);
+  };
 
   const updateFileUrl = (index: number, url: string) => {
     const newGraphicalElements = [...graphicalElements];
@@ -76,14 +86,13 @@ const ProjectComponent: React.FC = () => {
   const [OtherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("ProjectType");
 
+
   const { companyData } = useCompanyDataContext();
-  var companyId = companyData?.CompanyId;
-  console.log("companyData:", companyData);
-  console.log("companyId:", companyId)
+  let companyId = companyData?.CompanyId;
   if (!companyData) {
-    console.log("No company data found");
-    companyId = "unknown";
+    companyId = "no company data found";
   }
+  const { updateCompanyData } = useCompanyDataContext();
 
   const onSubmit = async (data: ProjectData) => {
     // Create project
@@ -100,7 +109,12 @@ const ProjectComponent: React.FC = () => {
     console.log("Project saved:", projectResponse);
 
     const projectId = projectResponse.id;
-    console.log("data for graphicalElement",data.graphicalElements);
+    console.log("data for graphicalElement", data.graphicalElements);
+
+    updateCompanyData({
+      ProjectData: data,
+      ProjectId: projectId,
+    });
 
     // Save Graphical Elements
     if (data.graphicalElements !== undefined) {
@@ -110,7 +124,7 @@ const ProjectComponent: React.FC = () => {
           File: element.File,
           Project: projectId,
         };
-        console.log("elementData:", elementData)
+        console.log("elementData:", elementData);
         const elementResponse = await addRecord(
           "GraphicalElements",
           elementData
@@ -120,7 +134,7 @@ const ProjectComponent: React.FC = () => {
     }
 
     // Go to next page
-    // goToPage();
+    goToPage();
   };
 
   return (
@@ -289,15 +303,10 @@ const ProjectComponent: React.FC = () => {
                 </Typography>
                 {graphicalElements.map((element, index) => (
                   <GraphicalElement
-                    key={index}
+                    key={element.id}
                     index={index}
                     control={control}
-                    graphicalElement={element}
-                    onDelete={(idx) => {
-                      const updatedGraphicalElements = [...graphicalElements];
-                      updatedGraphicalElements.splice(idx, 1);
-                      setGraphicalElements(updatedGraphicalElements);
-                    }}
+                    onDelete={() => handleDelete(element.id)}
                     updateFileUrl={updateFileUrl}
                   />
                 ))}
@@ -309,6 +318,8 @@ const ProjectComponent: React.FC = () => {
                       {
                         Title: "",
                         File: "",
+                        Project: companyId,
+                        id: uuidv4(),
                       },
                     ]);
                   }}

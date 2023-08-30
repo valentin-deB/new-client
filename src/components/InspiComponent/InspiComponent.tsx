@@ -1,74 +1,137 @@
 //React imports
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { v4 as uuidv4 } from "uuid";
 //MUI imports
 import { Button, Box, Typography, Link, Stack } from "@mui/material";
-
+// Data context imports
+import { useCompanyDataContext } from "../../context/CompanyDataContext";
 //Hooks imports
-
-
+import { useGoToPage } from "../hooks/useGoToPage";
+//Services imports
+import { addRecord } from "../services/airtableService";
+// Utils imports
+import { handleDeleteElement } from "../utils/handleDeleteElement";
 //Components imports
 import InspirationLink from "./components/InspirationLinkComponent";
 import InspirationImage from "./components/InspirationImageComponent";
 
+type InspirationLink = {
+  Title: string;
+  Description: string;
+  Link: string;
+  Project: string;
+  id: string;
+};
+
+type InspirationImage = {
+  Title: string;
+  Description: string;
+  File: string;
+  Project: string;
+  id: string;
+};
+
+type InspirationData = {
+  inspirationLinks: InspirationLink[];
+  inspirationImages: InspirationImage[];
+};
+
 const InspiComponent: React.FC = () => {
-  const [inspirationLinks, setInspirationLinks] = useState<
-    { title: string; description: string; link: string; projectId?: string }[]
-  >([{ title: "", description: "", link: "" }]);
+  const { goToPage } = useGoToPage("/end");
 
-  const [inspirationImages, setInspirationImages] = useState<
-    { file: File; title: string; description: string; projectId?: string }[]
-  >([]);
+  const { companyData } = useCompanyDataContext();
+  let projectId = companyData?.ProjectId;
+  if (!projectId) {
+    projectId = "no project data found";
+  }
 
-  const { handleSubmit } = useForm();
-
-  const addInspirationLink = () => {
-    setInspirationLinks([
-      ...inspirationLinks,
-      { title: "", description: "", link: "" },
-    ]);
+  const defaultInspirationLink: InspirationLink = {
+    Title: "",
+    Description: "",
+    Link: "",
+    id: uuidv4(),
+    Project: projectId,
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setInspirationImages([
-        ...inspirationImages,
-        ...Array.from(e.target.files).map((file) => ({
-          file,
-          title: "",
-          description: "",
-        })),
-      ]);
-    }
+  const defaultInspirationImage: InspirationImage = {
+    Title: "",
+    Description: "",
+    File: "",
+    id: uuidv4(),
+    Project: projectId,
+  };
+
+  const [inspirationLinks, setInspirationLinks] = useState<InspirationLink[]>([
+    defaultInspirationLink,
+  ]);
+  const [inspirationImages, setInspirationImages] = useState<
+    InspirationImage[]
+  >([defaultInspirationImage]);
+
+  const handleDeleteLink = (elementIdToDelete: string) => {
+    handleDeleteElement(
+      inspirationLinks,
+      setInspirationLinks,
+      elementIdToDelete
+    );
+  };
+  const handleDeleteImage = (elementIdToDelete: string) => {
+    handleDeleteElement(
+      inspirationImages,
+      setInspirationImages,
+      elementIdToDelete
+    );
+  };
+
+  const { control, handleSubmit, setValue } = useForm();
+
+  const updateFileUrl = (index: number, url: string) => {
+    const newInspirationImages = [...inspirationImages];
+    newInspirationImages[index].File = url;
+    setInspirationImages(newInspirationImages);
+    const fieldName = `inspirationImages[${index}].File` as const;
+    setValue(fieldName, url);
   };
 
   //Save to Airtable
 
-  const { saveToAirtable } = useSaveToAirtable("/project");
+  const onSubmit = async (data: InspirationData) => {
+    // Save Inspiration Links
+    if (data.inspirationLinks !== undefined) {
+      for (const element of data.inspirationLinks) {
+        const elementData = {
+          Title: element.Title,
+          File: element.Link,
+          Project: projectId,
+        };
+        console.log("elementData:", elementData);
+        const elementResponse = await addRecord(
+          "InspirationLinks",
+          elementData
+        );
+        console.log("Inspiration Links saved:", elementResponse);
+      }
+    }
+    // Save Inspiration Images
+    if (data.inspirationImages !== undefined) {
+      for (const element of data.inspirationImages) {
+        const elementData = {
+          Title: element.Title,
+          File: element.File,
+          Project: projectId,
+        };
+        console.log("elementData:", elementData);
+        const elementResponse = await addRecord(
+          "InspirationImages",
+          elementData
+        );
+        console.log("Inspiration Images saved:", elementResponse);
+      }
+    }
 
-  const onSubmit = async (data: unknown) => {
-    const projectResponse = await saveToAirtable("Projects", data);
-    
-    if (projectResponse && projectResponse.id) {
-      const projectId = projectResponse.id;
-  
-      // Save associated links
-      for (const link of inspirationLinks) {
-        link.projectId = projectId;
-        await saveToAirtable('InspirationLinks', link);
-      }
-  
-      // Save associated images
-      for (const image of inspirationImages) {
-        image.projectId = projectId;
-        await saveToAirtable('InspirationImages', image);
-      }
-    }
-    else {
-      // Handle errors
-      console.error("Error saving project.");
-    }
+    // Go to next page
+    // goToPage();
   };
 
   return (
@@ -135,42 +198,25 @@ const InspiComponent: React.FC = () => {
               </Link>
             </Typography>
             <Stack marginTop={2} gap={2}>
-              {inspirationLinks.map((inspiration, index) => (
+              {inspirationLinks.map((element, index) => (
                 <InspirationLink
-                  key={index + "link"}
-                  title={inspiration.title}
-                  description={inspiration.description}
-                  link={inspiration.link}
+                  key={element.id}
+                  control={control}
                   index={index}
-                  removeLink={(index) => {
-                    const newLinks = [...inspirationLinks];
-                    newLinks.splice(index, 1);
-                    setInspirationLinks(newLinks);
-                  }}
-                  updateLink={(index, updatedLink) => {
-                    const newLinks = [...inspirationLinks];
-                    Object.assign(newLinks[index], updatedLink);
-                    setInspirationLinks(newLinks);
+                  onDelete={() => {
+                    handleDeleteLink(element.id);
                   }}
                 />
               ))}
-              {inspirationImages.map((inspiration, index) => (
+              {inspirationImages.map((element, index) => (
                 <InspirationImage
-                  key={index + "image"}
-                  file={inspiration.file}
-                  title={inspiration.title}
-                  description={inspiration.description}
+                  key={element.id}
+                  control={control}
                   index={index}
-                  removeImage={(index) => {
-                    const newImages = [...inspirationImages];
-                    newImages.splice(index, 1);
-                    setInspirationImages(newImages);
+                  onDelete={() => {
+                    handleDeleteImage(element.id);
                   }}
-                  updateImage={(index, updatedImage) => {
-                    const newImages = [...inspirationImages];
-                    Object.assign(newImages[index], updatedImage);
-                    setInspirationImages(newImages);
-                  }}
+                  updateFileUrl={updateFileUrl}
                 />
               ))}
             </Stack>
@@ -178,17 +224,38 @@ const InspiComponent: React.FC = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={addInspirationLink}
+                onClick={() => {
+                  setInspirationLinks([
+                    ...inspirationLinks,
+                    {
+                      Title: "",
+                      Description: "",
+                      Link: "",
+                      Project: projectId,
+                      id: uuidv4(),
+                    },
+                  ]);
+                }}
               >
                 Ajouter un lien inspirant
               </Button>
               <Button variant="outlined" component="label">
-                Upload une image inspirante
+                Ajouter une image inspirante
                 <input
                   type="file"
                   hidden
-                  onChange={handleFileChange}
-                  multiple
+                  onClick={() => {
+                    setInspirationImages([
+                      ...inspirationImages,
+                      {
+                        Title: "",
+                        Description: "",
+                        File: "",
+                        Project: projectId,
+                        id: uuidv4(),
+                      },
+                    ]);
+                  }}
                 />
               </Button>
             </Stack>
