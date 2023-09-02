@@ -21,8 +21,7 @@ const GraphicalElement: React.FC<GraphicalElementFormProps> = ({
   updateFileUrl,
 }) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const { uploading, uploadedUrl, error, uploadToCloudinary } =
-    useCloudinaryUpload();
+  const { uploading, uploadedUrl, error, uploadToCloudinary } = useCloudinaryUpload();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -8,6 +8,8 @@ import { Button, Box, Typography, Link, Stack } from "@mui/material";
 import { useCompanyDataContext } from "../../context/CompanyDataContext";
 //Hooks imports
 import { useGoToPage } from "../hooks/useGoToPage";
+import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
+
 //Services imports
 import { addRecord } from "../services/airtableService";
 // Utils imports
@@ -102,7 +104,8 @@ const InspiComponent: React.FC = () => {
       for (const element of data.inspirationLinks) {
         const elementData = {
           Title: element.Title,
-          File: element.Link,
+          Link: element.Link,
+          Description: element.Description,
           Project: projectId,
         };
         console.log("elementData:", elementData);
@@ -119,6 +122,7 @@ const InspiComponent: React.FC = () => {
         const elementData = {
           Title: element.Title,
           File: element.File,
+          Description: element.Description,
           Project: projectId,
         };
         console.log("elementData:", elementData);
@@ -241,9 +245,7 @@ const InspiComponent: React.FC = () => {
               </Button>
               <Button variant="outlined" component="label">
                 Ajouter une image inspirante
-                <input
-                  type="file"
-                  hidden
+                <Button
                   onClick={() => {
                     setInspirationImages([
                       ...inspirationImages,

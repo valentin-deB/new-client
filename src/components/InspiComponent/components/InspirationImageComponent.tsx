@@ -1,60 +1,109 @@
-import React from "react";
-import { TextField, Button, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Controller, UseFormReturn } from "react-hook-form";
+import { TextField, Button, Stack, Avatar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
 type InspirationImageProps = {
-  file: File;
-  title: string;
-  description: string;
+  control: UseFormReturn["control"];
   index: number;
-  removeImage: (index: number) => void;
-  updateImage: (
-    index: number,
-    updatedImage: { title?: string; description?: string }
-  ) => void;
+  onDelete: (index: number) => void;
+  updateFileUrl: (index: number, url: string) => void;
 };
 
 const InspirationImage: React.FC<InspirationImageProps> = ({
-  file,
-  title,
-  description,
+  control,
   index,
-  removeImage,
-  updateImage,
+  onDelete,
+  updateFileUrl,
 }) => {
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const { uploading, uploadedUrl, error, uploadToCloudinary } =
+    useCloudinaryUpload();
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await uploadToCloudinary(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    if (uploadedUrl) {
+      updateFileUrl(index, uploadedUrl);
+    }
+  }, [uploadedUrl]);
+
   return (
-    <Stack gap={2}>
-      <Stack flexDirection="row" alignItems="center" gap={2}>
-        <img
-          src={URL.createObjectURL(file)}
-          alt={title}
-          style={{ maxWidth: "120px", maxHeight: "120px", borderRadius: "5px", border: "1px solid #C4C4C4"}}
+    <Stack flexDirection="row" gap={1} width={"100%"} alignItems={"center"}>
+      <Stack gap={1} width={"100%"}>
+        <Controller
+          name={`inspirationImages[${index}].Title`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField {...field} label="Title" required fullWidth />
+          )}
         />
-        <Stack flexDirection="column" gap={1} width="100%">
-          <TextField
-            label="Title"
-            value={title}
-            style={{ display: "inline" }}
-            onChange={(e) => updateImage(index, { title: e.target.value })}
+
+        {/* Description */}
+        <Controller
+          name={`inspirationImages[${index}].Description`}
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Description"
+              required
+              fullWidth
+              multiline
+              rows={3}
+            />
+          )}
+        />
+      </Stack>
+      <Stack alignItems={"center"}>
+        {filePreview && (
+          <Avatar
+            style={{border: "1px solid #0000003B", borderRadius: "4px"}}
+            src={filePreview}
+            variant="square"
+            sx={{ width: 100, height: 100, mb: 2 }}
           />
-          <TextField
-            label="Description"
-            value={description}
-            multiline
-            fullWidth
-            onChange={(e) =>
-              updateImage(index, { description: e.target.value })
-            }
+        )}
+        <Stack flexDirection="row" gap={1}>
+          <Controller
+            name={`inspirationImages[${index}].File`}
+            control={control}
+            render={({ field }) => (
+              <Button variant="contained" component="label" color="primary">
+                <FileUploadIcon />
+                <input
+                  type="file"
+                  accept=".pdf, image/*, .svg, .eps, .ai"
+                  hidden
+                  {...field}
+                  onChange={handleFileChange}
+                  value={undefined}
+                />
+              </Button>
+            )}
           />
+          <Button
+            variant="outlined"
+            onClick={() => onDelete(index)}
+          >
+            <DeleteIcon />
+          </Button>
         </Stack>
       </Stack>
-      <Button
-        variant="outlined"
-        startIcon={<DeleteIcon />}
-        onClick={() => removeImage(index)}
-      >
-        Retirer
-      </Button>
     </Stack>
   );
 };
