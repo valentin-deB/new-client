@@ -19,7 +19,7 @@ const InspirationImage: React.FC<InspirationImageProps> = ({
   updateFileUrl,
 }) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const { uploading, uploadedUrl, error, uploadToCloudinary } =
+  const { uploadedUrl, uploadToCloudinary } =
     useCloudinaryUpload();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

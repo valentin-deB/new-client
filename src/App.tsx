@@ -5,6 +5,7 @@ import StartComponent from "./components/StartComponent/StartComponent";
 import InfosComponent from "./components/InfosComponent/InfosComponent";
 import ProjectComponent from "./components/ProjectComponent/ProjectComponent";
 import InspiComponent from "./components/InspiComponent/InspiComponent";
+import EndComponent from "./components/EndComponent/EndComponent";
 // Scripts imports
 import useWordChecker from "./scripts/WordChecker";
 import useImageAnimation from "./scripts/animation";
@@ -23,6 +24,7 @@ function App() {
             <Route path="/infos" element={<InfosComponent />} />
             <Route path="/project" element={<ProjectComponent />} />
             <Route path="/inspirations" element={<InspiComponent />} />
+            <Route path="/end" element={<EndComponent />} />
           </Routes>
 
           {showImage && imageUrl && (

@@ -8,7 +8,6 @@ import { Button, Box, Typography, Link, Stack } from "@mui/material";
 import { useCompanyDataContext } from "../../context/CompanyDataContext";
 //Hooks imports
 import { useGoToPage } from "../hooks/useGoToPage";
-import { useCloudinaryUpload } from "../../hooks/useCloudinaryUpload";
 
 //Services imports
 import { addRecord } from "../services/airtableService";
@@ -135,7 +134,7 @@ const InspiComponent: React.FC = () => {
     }
 
     // Go to next page
-    // goToPage();
+    goToPage();
   };
 
   return (
