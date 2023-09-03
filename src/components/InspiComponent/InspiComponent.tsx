@@ -1,6 +1,6 @@
 //React imports
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FieldValues, Control } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 //MUI imports
 import { Button, Box, Typography, Link, Stack } from "@mui/material";
@@ -42,7 +42,8 @@ const InspiComponent: React.FC = () => {
   const { goToPage } = useGoToPage("/end");
 
   const { companyData } = useCompanyDataContext();
-  let projectId = companyData?.ProjectId;
+  //eslint-disable-next-line
+  let projectId = (companyData as any)?.ProjectId;
   if (!projectId) {
     projectId = "no project data found";
   }
@@ -85,13 +86,14 @@ const InspiComponent: React.FC = () => {
     );
   };
 
-  const { control, handleSubmit, setValue } = useForm();
+  const { control, handleSubmit, setValue } = useForm<InspirationData>();
 
   const updateFileUrl = (index: number, url: string) => {
     const newInspirationImages = [...inspirationImages];
     newInspirationImages[index].File = url;
     setInspirationImages(newInspirationImages);
-    const fieldName = `inspirationImages[${index}].File` as const;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fieldName = `inspirationImages[${index}].File` as any;
     setValue(fieldName, url);
   };
 
@@ -204,7 +206,8 @@ const InspiComponent: React.FC = () => {
               {inspirationLinks.map((element, index) => (
                 <InspirationLink
                   key={element.id}
-                  control={control}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  control={control as unknown as Control<FieldValues, any>}
                   index={index}
                   onDelete={() => {
                     handleDeleteLink(element.id);
@@ -214,7 +217,8 @@ const InspiComponent: React.FC = () => {
               {inspirationImages.map((element, index) => (
                 <InspirationImage
                   key={element.id}
-                  control={control}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  control={control as unknown as Control<FieldValues, any>}
                   index={index}
                   onDelete={() => {
                     handleDeleteImage(element.id);

@@ -1,6 +1,6 @@
 //React imports
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, Control, FieldValues } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 // Data context imports
 import { useCompanyDataContext } from "../../context/CompanyDataContext";
@@ -24,7 +24,7 @@ import { useGoToPage } from "../hooks/useGoToPage";
 //Services imports
 import { addRecord } from "../services/airtableService";
 // Utils imports
-import { handleDeleteElement } from '../utils/handleDeleteElement';
+import { handleDeleteElement } from "../utils/handleDeleteElement";
 //Components imports
 import GraphicalElement from "./components/GraphicalElement";
 
@@ -66,29 +66,34 @@ const ProjectComponent: React.FC = () => {
       graphicalElements: [defaultGraphicalElement],
     },
   });
-  
+
   const [graphicalElements, setGraphicalElements] = useState<
-  GraphicalElement[]
+    GraphicalElement[]
   >([defaultGraphicalElement]);
-  
+
   const handleDelete = (elementIdToDelete: string) => {
-    handleDeleteElement(graphicalElements, setGraphicalElements, elementIdToDelete);
+    handleDeleteElement(
+      graphicalElements,
+      setGraphicalElements,
+      elementIdToDelete
+    );
   };
 
   const updateFileUrl = (index: number, url: string) => {
     const newGraphicalElements = [...graphicalElements];
     newGraphicalElements[index].File = url;
     setGraphicalElements(newGraphicalElements);
-    const fieldName = `graphicalElements[${index}].File` as const;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fieldName: keyof ProjectData = `graphicalElements[${index}].File` as any;
     setValue(fieldName, url);
   };
 
   const [OtherProjectType, setOtherProjectType] = useState("");
   const projectTypes = watch("ProjectType");
 
-
   const { companyData } = useCompanyDataContext();
-  let companyId = companyData?.CompanyId;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let companyId = (companyData as any)?.CompanyId;
   if (!companyData) {
     companyId = "no company data found";
   }
@@ -305,7 +310,8 @@ const ProjectComponent: React.FC = () => {
                   <GraphicalElement
                     key={element.id}
                     index={index}
-                    control={control}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    control={control as unknown as Control<FieldValues, any>}
                     onDelete={() => handleDelete(element.id)}
                     updateFileUrl={updateFileUrl}
                   />

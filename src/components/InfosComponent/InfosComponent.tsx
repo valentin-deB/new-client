@@ -1,6 +1,6 @@
 // React Imports
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, Control, FieldValues } from "react-hook-form";
 // MUI imports
 import { TextField, Button, Box, Typography, Stack } from "@mui/material";
 import "react-phone-input-2/lib/material.css";
@@ -146,7 +146,8 @@ const IntroComponent: React.FC = () => {
               </Typography>
               {contacts.map((contact, index) => (
                 <ContactFormComponent
-                  control={control}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  control={control as unknown as Control<FieldValues, any>}
                   contact={contact}
                   index={index}
                   key={index}
