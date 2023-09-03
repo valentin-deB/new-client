@@ -17,7 +17,7 @@ const useWordChecker = (wordList: string[]): WordCheckerReturnType => {
             for (const word of wordList) {
                 if (typedString.endsWith(word)) {
                     setShowImage(true);
-                    setImageUrl(`/assets/img/${word.replace(':', '')}.png`);
+                    setImageUrl(`assets/img/${word.replace('::', '')}.png`);
                     typedString = ""; 
                     break;
                 }
