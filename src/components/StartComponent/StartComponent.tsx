@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 
+
 const StartComponent: React.FC = () => {
     const navigate = useNavigate();
   
